@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Multiple StopWatch  Timers</title>
+    <title>چند تایمر StopWatch</title>
     <style>
         @font-face {
             font-family: 'Vazir';
@@ -348,60 +348,60 @@
 </head>
 <body>
     <div class="container">
-        <h1>Multiple StopWatch Timers</h1>
+        <h1>چند تایمر StopWatch</h1>
 
-        <!-- Blogfa loads dynamic blog content in this tag -->
+        <!-- بلاگفا محتوای داینامیک وبلاگ را در این تگ لود می‌کند -->
         <BLOGFA>
 
         <div class="controls">
-            <button id="addTimer">Add New Timer</button>
-            <button id="showManualForm" class="manual">Add Manual Timer</button>
+            <button id="addTimer">افزودن تایمر جدید</button>
+            <button id="showManualForm" class="manual">افزودن تایمر دستی</button>
         </div>
 
         <div id="manualTimerForm" class="manual-timer-form">
             <div class="form-row">
                 <div class="form-group">
-                    <label for="manualStartTime">Start Time (HH:MM:SS)</label>
-                    <input type="text" id="manualStartTime" class="form-control" placeholder="Example: 08:30:00">
+                    <label for="manualStartTime">زمان شروع (HH:MM:SS)</label>
+                    <input type="text" id="manualStartTime" class="form-control" placeholder="مثال: 08:30:00">
                 </div>
                 <div class="form-group">
-                    <label for="manualEndTime">End Time (HH:MM:SS)</label>
-                    <input type="text" id="manualEndTime" class="form-control" placeholder="Example: 09:45:00">
+                    <label for="manualEndTime">زمان پایان (HH:MM:SS)</label>
+                    <input type="text" id="manualEndTime" class="form-control" placeholder="مثال: 09:45:00">
                 </div>
             </div>
             <div class="form-group">
-                <label for="manualDuration">Duration (HH:MM:SS)</label>
-                <input type="text" id="manualDuration" class="form-control" placeholder="Example: 01:15:00">
-                <small>This field is calculated automatically. If you enter it manually, your value will take priority.</small>
+                <label for="manualDuration">مدت زمان (HH:MM:SS)</label>
+                <input type="text" id="manualDuration" class="form-control" placeholder="مثال: 01:15:00">
+                <small>این فیلد به صورت خودکار محاسبه می‌شود. اگر خودتان وارد کنید، اولویت با مقدار شما خواهد بود.</small>
             </div>
             <div class="form-group">
-                <label>Status</label>
+                <label>وضعیت</label>
                 <div class="radio-group">
                     <div class="radio-option">
                         <input type="radio" id="statusWork" name="manualStatus" value="work" checked>
-                        <label for="statusWork">Working</label>
+                        <label for="statusWork">در حال کار</label>
                     </div>
                     <div class="radio-option">
                         <input type="radio" id="statusBreak" name="manualStatus" value="break">
-                        <label for="statusBreak">Break</label>
+                        <label for="statusBreak">استراحت</label>
                     </div>
                 </div>
             </div>
             <div class="form-actions">
-                <button type="button" id="cancelManualTimer" class="cancel">Cancel</button>
-                <button type="button" id="saveManualTimer" class="save">Save</button>
+                <button type="button" id="cancelManualTimer" class="cancel">انصراف</button>
+                <button type="button" id="saveManualTimer" class="save">ذخیره</button>
             </div>
         </div>
 
         <table id="timerTable">
             <thead>
                 <tr>
-                    <th>Number</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Duration</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>شماره</th>
+                    <th>زمان شروع</th>
+                    <th>زمان پایان</th>
+                    <th>مدت زمان</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -409,26 +409,26 @@
 
         <div class="stats-container">
             <div class="stat-box">
-                <div class="stat-title">Total Time</div>
+                <div class="stat-title">جمع کل زمان‌ها</div>
                 <div class="stat-value" id="totalTime">00:00:00</div>
             </div>
             
             <div class="stat-box">
-                <div class="stat-title">Work Time</div>
+                <div class="stat-title">زمان کار</div>
                 <div class="stat-value" id="workTime">00:00:00</div>
             </div>
             
             <div class="stat-box">
-                <div class="stat-title">Break Time</div>
+                <div class="stat-title">زمان استراحت</div>
                 <div class="stat-value" id="breakTime">00:00:00</div>
             </div>
         </div>
         
         <div class="stat-box" style="margin-top: 20px;">
-            <div class="stat-title">Work and Break Ratio</div>
+            <div class="stat-title">نسبت کار و استراحت</div>
             <div class="progress-container">
                 <div class="progress-bar progress-work" id="workPercentBar"></div>
-                <div class="progress-label" id="percentLabel">0% Work / 0% Break</div>
+                <div class="progress-label" id="percentLabel">0% کار / 0% استراحت</div>
             </div>
         </div>
     </div>
@@ -595,7 +595,7 @@
                 
                 // Validate inputs
                 if (!startTimeStr || !endTimeStr || !durationStr) {
-                    alert('Please fill in all fields.');
+                    alert('لطفا تمام فیلدها را پر کنید.');
                     return;
                 }
                 
@@ -605,7 +605,7 @@
                     const [hours, minutes, seconds] = durationStr.split(':').map(Number);
                     duration = hours * 3600 + minutes * 60 + seconds;
                 } catch (e) {
-                    alert('Invalid duration format. Please enter in HH:MM:SS format.');
+                    alert('فرمت مدت زمان نامعتبر است. لطفا به صورت HH:MM:SS وارد کنید.');
                     return;
                 }
                 
@@ -644,13 +644,13 @@
                     <td id="duration-${timer.id}">00:00:00</td>
                     <td>
                         <div class="status-selector" id="status-selector-${timer.id}">
-                            <div class="status-option status-work ${timer.getStatus() === 'work' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'work')">Working</div>
-                            <div class="status-option status-break ${timer.getStatus() === 'break' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'break')">Break</div>
+                            <div class="status-option status-work ${timer.getStatus() === 'work' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'work')">در حال کار</div>
+                            <div class="status-option status-break ${timer.getStatus() === 'break' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'break')">استراحت</div>
                         </div>
                     </td>
                     <td>
-                        <button class="stop" onclick="timerManager.stopTimer(${timer.id})">Stop</button>
-                        <button class="delete" onclick="timerManager.deleteTimer(${timer.id})">Delete</button>
+                        <button class="stop" onclick="timerManager.stopTimer(${timer.id})">توقف</button>
+                        <button class="delete" onclick="timerManager.deleteTimer(${timer.id})">حذف</button>
                     </td>
                 `;
             }
@@ -667,12 +667,12 @@
                     <td id="duration-${timer.id}">${timer.formatTime(timer.duration)}</td>
                     <td>
                         <div class="status-selector" id="status-selector-${timer.id}">
-                            <div class="status-option status-work ${timer.getStatus() === 'work' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'work')">Working</div>
-                            <div class="status-option status-break ${timer.getStatus() === 'break' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'break')">Break</div>
+                            <div class="status-option status-work ${timer.getStatus() === 'work' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'work')">در حال کار</div>
+                            <div class="status-option status-break ${timer.getStatus() === 'break' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'break')">استراحت</div>
                         </div>
                     </td>
                     <td>
-                        <button class="delete" onclick="timerManager.deleteTimer(${timer.id})">Delete</button>
+                        <button class="delete" onclick="timerManager.deleteTimer(${timer.id})">حذف</button>
                     </td>
                 `;
             }
@@ -766,7 +766,7 @@
                 workBar.style.width = `${workPercent}%`;
                 
                 const percentLabel = document.getElementById('percentLabel');
-                percentLabel.textContent = ` Work ${workPercent}%  / ${breakPercent}% Break`;
+                percentLabel.textContent = `${workPercent}% کار / ${breakPercent}% استراحت`;
             }
 
             formatTime(seconds) {
