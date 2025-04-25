@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Multiple StopWatch Timers</title>
+    <style>
+        @font-face {
+            font-family: 'Vazir';
+            src: url('https://cdnjs.cloudflare.com/ajax/libs/vazir-font/30.1.0/Vazir.eot');
+            src: url('https://cdnjs.cloudflare.com/ajax/libs/vazir-font/30.1.0/Vazir.eot?#iefix') format('embedded-opentype'),
+                 url('https://cdnjs.cloudflare.com/ajax/libs/vazir-font/30.1.0/Vazir.woff2') format('woff2'),
+                 url('https://cdnjs.cloudflare.com/ajax/libs/vazir-font/30.1.0/Vazir.woff') format('woff'),
+                 url('https://cdnjs.cloudflare.com/ajax/libs/vazir-font/30.1.0/Vazir.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Vazir', 'Tahoma', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #ffffff);
+            color: #263238;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            color: #01579b;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #0288d1;
+            padding-bottom: 15px;
+            position: relative;
+        }
+
+        h1:after {
+            content: "";
+            position: absolute;
+            bottom: -3px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 100px;
+            height: 3px;
+            background-color: #00b0ff;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: #0288d1;
+            border: none;
+            padding: 12px 24px;
+            font-family: 'Vazir', 'Tahoma', Arial, sans-serif;
+            font-size: 15px;
+            color: white;
+            cursor: pointer;
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #01579b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button.manual {
+            background-color: #7b1fa2;
+        }
+
+        button.manual:hover {
+            background-color: #6a1b9a;
+        }
+
+        button.stop {
+            background-color: #e53935;
+        }
+
+        button.stop:hover {
+            background-color: #c62828;
+        }
+
+        button.delete {
+            background-color: #ffa000;
+            color: white;
+        }
+
+        button.delete:hover {
+            background-color: #ff6f00;
+        }
+
+        button.cancel {
+            background-color: #757575;
+        }
+
+        button.cancel:hover {
+            background-color: #616161;
+        }
+
+        button.save {
+            background-color: #43a047;
+        }
+
+        button.save:hover {
+            background-color: #2e7d32;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            font-size: 15px;
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #e1f5fe;
+            font-weight: bold;
+            color: #01579b;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f5f5f5;
+        }
+
+        tr:hover td {
+            background-color: #e1f5fe;
+        }
+
+        .stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-title {
+            font-size: 16px;
+            color: #455a64;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #01579b;
+        }
+
+        .status-selector {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .status-option {
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .status-work {
+            color: #2e7d32;
+            background-color: #e8f5e9;
+        }
+
+        .status-work.selected {
+            background-color: #81c784;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-break {
+            color: #1565c0;
+            background-color: #e3f2fd;
+        }
+
+        .status-break.selected {
+            background-color: #64b5f6;
+            color: white;
+            font-weight: bold;
+        }
+
+        .active-row {
+            border-right: 4px solid #4caf50;
+        }
+
+        .progress-container {
+            background-color: #eceff1;
+            border-radius: 10px;
+            height: 15px;
+            width: 100%;
+            margin-top: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            display: flex;
+            transition: width 0.3s ease;
+        }
+
+        .progress-work {
+            background-color: #66bb6a;
+        }
+
+        .progress-break {
+            background-color: #42a5f5;
+        }
+
+        .progress-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
+            color: #263238;
+            text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .manual-timer-form {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #01579b;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            font-family: 'Vazir', 'Tahoma', Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-container {
+                flex-direction: column;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .form-row .form-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Multiple StopWatch Timers</h1>
+
+        <!-- Blogfa loads dynamic blog content in this tag -->
+        <BLOGFA>
+
+        <div class="controls">
+            <button id="addTimer">Add New Timer</button>
+            <button id="showManualForm" class="manual">Add Manual Timer</button>
+        </div>
+
+        <div id="manualTimerForm" class="manual-timer-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="manualStartTime">Start Time (HH:MM:SS)</label>
+                    <input type="text" id="manualStartTime" class="form-control" placeholder="Example: 08:30:00">
+                </div>
+                <div class="form-group">
+                    <label for="manualEndTime">End Time (HH:MM:SS)</label>
+                    <input type="text" id="manualEndTime" class="form-control" placeholder="Example: 09:45:00">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="manualDuration">Duration (HH:MM:SS)</label>
+                <input type="text" id="manualDuration" class="form-control" placeholder="Example: 01:15:00">
+                <small>This field is calculated automatically. If you enter it manually, your value will take priority.</small>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="statusWork" name="manualStatus" value="work" checked>
+                        <label for="statusWork">Working</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="statusBreak" name="manualStatus" value="break">
+                        <label for="statusBreak">Break</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" id="cancelManualTimer" class="cancel">Cancel</button>
+                <button type="button" id="saveManualTimer" class="save">Save</button>
+            </div>
+        </div>
+
+        <table id="timerTable">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-title">Total Time</div>
+                <div class="stat-value" id="totalTime">00:00:00</div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-title">Work Time</div>
+                <div class="stat-value" id="workTime">00:00:00</div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-title">Break Time</div>
+                <div class="stat-value" id="breakTime">00:00:00</div>
+            </div>
+        </div>
+        
+        <div class="stat-box" style="margin-top: 20px;">
+            <div class="stat-title">Work and Break Ratio</div>
+            <div class="progress-container">
+                <div class="progress-bar progress-work" id="workPercentBar"></div>
+                <div class="progress-label" id="percentLabel">0% Work / 0% Break</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class Timer {
+            constructor(id, options = {}) {
+                this.id = id;
+                this.startTime = options.startTime || new Date();
+                this.endTime = options.endTime || null;
+                this.interval = null;
+                this.duration = options.duration !== undefined ? options.duration : 0;
+                this.status = options.status || 'work'; // 'work' or 'break'
+                this.isManual = options.isManual || false;
+                
+                if (!this.isManual && !this.endTime) {
+                    this.start();
+                }
+            }
+
+            start() {
+                this.interval = setInterval(() => {
+                    this.updateDuration();
+                }, 1000);
+            }
+
+            stop() {
+                this.endTime = new Date();
+                if (this.interval) {
+                    clearInterval(this.interval);
+                }
+                this.updateDuration();
+                return this.formatTime(this.duration);
+            }
+
+            updateDuration() {
+                if (!this.isManual) {
+                    const end = this.endTime || new Date();
+                    this.duration = Math.floor((end - this.startTime) / 1000);
+                }
+                this.updateDisplay();
+            }
+
+            updateDisplay() {
+                const durationCell = document.querySelector(`#duration-${this.id}`);
+                if (durationCell) {
+                    durationCell.textContent = this.formatTime(this.duration);
+                }
+            }
+
+            formatTime(seconds) {
+                const h = Math.floor(seconds / 3600);
+                const m = Math.floor((seconds % 3600) / 60);
+                const s = seconds % 60;
+                return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            }
+
+            getFormattedStartTime() {
+                if (this.startTime instanceof Date) {
+                    return this.formatDateTime(this.startTime);
+                }
+                return this.startTime; // Manual time already formatted
+            }
+
+            getFormattedEndTime() {
+                if (!this.endTime) return '-';
+                if (this.endTime instanceof Date) {
+                    return this.formatDateTime(this.endTime);
+                }
+                return this.endTime; // Manual time already formatted
+            }
+
+            formatDateTime(date) {
+                return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+            }
+
+            setStatus(status) {
+                this.status = status;
+            }
+
+            getStatus() {
+                return this.status;
+            }
+        }
+
+        class TimerManager {
+            constructor() {
+                this.timers = [];
+                this.currentId = 0;
+                this.init();
+            }
+
+            init() {
+                document.getElementById('addTimer').addEventListener('click', () => this.addNewTimer());
+                document.getElementById('showManualForm').addEventListener('click', () => this.showManualTimerForm());
+                document.getElementById('saveManualTimer').addEventListener('click', () => this.saveManualTimer());
+                document.getElementById('cancelManualTimer').addEventListener('click', () => this.hideManualTimerForm());
+                
+                // Set up time input calculation
+                const startTimeInput = document.getElementById('manualStartTime');
+                const endTimeInput = document.getElementById('manualEndTime');
+                const durationInput = document.getElementById('manualDuration');
+                
+                startTimeInput.addEventListener('blur', () => this.calculateDuration());
+                endTimeInput.addEventListener('blur', () => this.calculateDuration());
+                
+                this.updateStats();
+                
+                // Update stats every second to keep them current with active timers
+                setInterval(() => this.updateStats(), 1000);
+            }
+
+            showManualTimerForm() {
+                document.getElementById('manualTimerForm').style.display = 'block';
+                document.getElementById('showManualForm').style.display = 'none';
+            }
+
+            hideManualTimerForm() {
+                document.getElementById('manualTimerForm').style.display = 'none';
+                document.getElementById('showManualForm').style.display = 'inline-block';
+                
+                // Clear form
+                document.getElementById('manualStartTime').value = '';
+                document.getElementById('manualEndTime').value = '';
+                document.getElementById('manualDuration').value = '';
+                document.getElementById('statusWork').checked = true;
+            }
+
+            calculateDuration() {
+                const startTimeStr = document.getElementById('manualStartTime').value;
+                const endTimeStr = document.getElementById('manualEndTime').value;
+                
+                if (startTimeStr && endTimeStr) {
+                    try {
+                        const [startHours, startMinutes, startSeconds] = startTimeStr.split(':').map(Number);
+                        const [endHours, endMinutes, endSeconds] = endTimeStr.split(':').map(Number);
+                        
+                        let startTotalSeconds = startHours * 3600 + startMinutes * 60 + startSeconds;
+                        let endTotalSeconds = endHours * 3600 + endMinutes * 60 + endSeconds;
+                        
+                        // Handle if end time is on the next day
+                        if (endTotalSeconds < startTotalSeconds) {
+                            endTotalSeconds += 24 * 3600; // Add 24 hours
+                        }
+                        
+                        const durationSeconds = endTotalSeconds - startTotalSeconds;
+                        const durationHours = Math.floor(durationSeconds / 3600);
+                        const durationMinutes = Math.floor((durationSeconds % 3600) / 60);
+                        const durationRemainingSeconds = durationSeconds % 60;
+                        
+                        document.getElementById('manualDuration').value = 
+                            `${String(durationHours).padStart(2, '0')}:${String(durationMinutes).padStart(2, '0')}:${String(durationRemainingSeconds).padStart(2, '0')}`;
+                    } catch (e) {
+                        console.error('Error calculating duration:', e);
+                    }
+                }
+            }
+
+            saveManualTimer() {
+                const startTimeStr = document.getElementById('manualStartTime').value;
+                const endTimeStr = document.getElementById('manualEndTime').value;
+                const durationStr = document.getElementById('manualDuration').value;
+                const status = document.querySelector('input[name="manualStatus"]:checked').value;
+                
+                // Validate inputs
+                if (!startTimeStr || !endTimeStr || !durationStr) {
+                    alert('Please fill in all fields.');
+                    return;
+                }
+                
+                // Parse duration to seconds
+                let duration = 0;
+                try {
+                    const [hours, minutes, seconds] = durationStr.split(':').map(Number);
+                    duration = hours * 3600 + minutes * 60 + seconds;
+                } catch (e) {
+                    alert('Invalid duration format. Please enter in HH:MM:SS format.');
+                    return;
+                }
+                
+                // Create new timer with manual settings
+                const timer = new Timer(++this.currentId, {
+                    startTime: startTimeStr,
+                    endTime: endTimeStr,
+                    duration: duration,
+                    status: status,
+                    isManual: true
+                });
+                
+                this.timers.push(timer);
+                this.addManualTimerToTable(timer);
+                this.updateStats();
+                this.hideManualTimerForm();
+            }
+
+            addNewTimer() {
+                const timer = new Timer(++this.currentId);
+                this.timers.push(timer);
+                this.addTimerToTable(timer);
+                this.updateStats();
+            }
+
+            addTimerToTable(timer) {
+                const tbody = document.querySelector('#timerTable tbody');
+                const row = tbody.insertRow();
+                row.id = `timer-row-${timer.id}`;
+                row.classList.add('active-row');
+
+                row.innerHTML = `
+                    <td>${timer.id}</td>
+                    <td>${timer.getFormattedStartTime()}</td>
+                    <td id="end-${timer.id}">-</td>
+                    <td id="duration-${timer.id}">00:00:00</td>
+                    <td>
+                        <div class="status-selector" id="status-selector-${timer.id}">
+                            <div class="status-option status-work ${timer.getStatus() === 'work' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'work')">Working</div>
+                            <div class="status-option status-break ${timer.getStatus() === 'break' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'break')">Break</div>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="stop" onclick="timerManager.stopTimer(${timer.id})">Stop</button>
+                        <button class="delete" onclick="timerManager.deleteTimer(${timer.id})">Delete</button>
+                    </td>
+                `;
+            }
+
+            addManualTimerToTable(timer) {
+                const tbody = document.querySelector('#timerTable tbody');
+                const row = tbody.insertRow();
+                row.id = `timer-row-${timer.id}`;
+
+                row.innerHTML = `
+                    <td>${timer.id}</td>
+                    <td>${timer.getFormattedStartTime()}</td>
+                    <td id="end-${timer.id}">${timer.getFormattedEndTime()}</td>
+                    <td id="duration-${timer.id}">${timer.formatTime(timer.duration)}</td>
+                    <td>
+                        <div class="status-selector" id="status-selector-${timer.id}">
+                            <div class="status-option status-work ${timer.getStatus() === 'work' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'work')">Working</div>
+                            <div class="status-option status-break ${timer.getStatus() === 'break' ? 'selected' : ''}" onclick="timerManager.changeStatus(${timer.id}, 'break')">Break</div>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="delete" onclick="timerManager.deleteTimer(${timer.id})">Delete</button>
+                    </td>
+                `;
+            }
+
+            changeStatus(id, status) {
+                const timer = this.timers.find(t => t.id === id);
+                if (timer) {
+                    timer.setStatus(status);
+                    
+                    // Update visual selection
+                    const selector = document.querySelector(`#status-selector-${id}`);
+                    const workOption = selector.querySelector('.status-work');
+                    const breakOption = selector.querySelector('.status-break');
+                    
+                    if (status === 'work') {
+                        workOption.classList.add('selected');
+                        breakOption.classList.remove('selected');
+                    } else {
+                        workOption.classList.remove('selected');
+                        breakOption.classList.add('selected');
+                    }
+                    
+                    this.updateStats();
+                }
+            }
+
+            stopTimer(id) {
+                const timer = this.timers.find(t => t.id === id);
+                if (timer && !timer.endTime) {
+                    timer.stop();
+                    document.querySelector(`#end-${id}`).textContent = timer.getFormattedEndTime();
+                    document.querySelector(`#timer-row-${id}`).classList.remove('active-row');
+                    
+                    this.updateStats();
+                }
+            }
+
+            deleteTimer(id) {
+                const timerIndex = this.timers.findIndex(t => t.id === id);
+                if (timerIndex > -1) {
+                    const timer = this.timers[timerIndex];
+                    if (timer.interval) {
+                        clearInterval(timer.interval);
+                    }
+                    this.timers.splice(timerIndex, 1);
+                    document.querySelector(`#timer-row-${id}`).remove();
+                    this.updateStats();
+                }
+            }
+
+            updateStats() {
+                let totalSeconds = 0;
+                let workSeconds = 0;
+                let breakSeconds = 0;
+                
+                this.timers.forEach(timer => {
+                    const currentDuration = timer.duration;
+                    totalSeconds += currentDuration;
+                    
+                    if (timer.getStatus() === 'work') {
+                        workSeconds += currentDuration;
+                    } else {
+                        breakSeconds += currentDuration;
+                    }
+                });
+                
+                // Update total time
+                document.getElementById('totalTime').textContent = this.formatTime(totalSeconds);
+                
+                // Update work time
+                document.getElementById('workTime').textContent = this.formatTime(workSeconds);
+                
+                // Update break time
+                document.getElementById('breakTime').textContent = this.formatTime(breakSeconds);
+                
+                // Update percentage bars
+                this.updatePercentageBars(workSeconds, breakSeconds);
+            }
+            
+            updatePercentageBars(workSeconds, breakSeconds) {
+                const totalSeconds = workSeconds + breakSeconds;
+                let workPercent = 0;
+                let breakPercent = 0;
+                
+                if (totalSeconds > 0) {
+                    workPercent = Math.round((workSeconds / totalSeconds) * 100);
+                    breakPercent = 100 - workPercent;
+                }
+                
+                const workBar = document.getElementById('workPercentBar');
+                workBar.style.width = `${workPercent}%`;
+                
+                const percentLabel = document.getElementById('percentLabel');
+                percentLabel.textContent = ` Work ${workPercent}%  / ${breakPercent}% Break`;
+            }
+
+            formatTime(seconds) {
+                const h = Math.floor(seconds / 3600);
+                const m = Math.floor((seconds % 3600) / 60);
+                const s = seconds % 60;
+                return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            }
+        }
+
+        const timerManager = new TimerManager();
+    </script>
+</body>
+</html>
